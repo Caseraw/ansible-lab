@@ -26,3 +26,13 @@
     copy:
       src: "{{ inventory_dir }}/static-website-demo-01/"
       dest: "{{ documentroot }}/"
+
+  - name: Open firewall for http and https
+    firewalld:
+      service: "{{ item }}"
+      immediate: true
+      permanent: true
+      state: enabled
+    loop:
+    - http
+    - https
