@@ -26,5 +26,3 @@ printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 echo "Show ansible details"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 ansible --version
-
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
