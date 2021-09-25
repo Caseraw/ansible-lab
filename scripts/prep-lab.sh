@@ -11,8 +11,9 @@ sudo dnf install git -y &&\
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
 echo "Show python details" &&\
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
-sudo python3 --version &&\
 sudo alternatives --list &&\
+echo "\n" &&\
+sudo python3 --version &&\
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
 echo "Install pip packages" &&\
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
