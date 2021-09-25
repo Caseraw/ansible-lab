@@ -29,3 +29,10 @@ printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 printf "${GREEN}Show ansible details${NC}\n"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 ansible --version
+
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+printf "${GREEN}Install project dependencies${NC}\n"
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+cd ~/ansible
+ansible-galaxy role install -r requirements.yml
+cd
