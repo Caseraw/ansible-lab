@@ -12,7 +12,7 @@ printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
 echo "Show python details" &&\
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
 sudo alternatives --list &&\
-echo "\n" &&\
+echo "" &&\
 sudo python3 --version &&\
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - &&\
 echo "Install pip packages" &&\
