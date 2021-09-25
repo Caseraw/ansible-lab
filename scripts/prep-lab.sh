@@ -1,28 +1,31 @@
 #!/bin/bash
 
+GREEN='\033[0;32m'
+NC='\033[0m'
+
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-echo "Install Python"
+echo "${GREEN}Install Python${NC}"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 sudo dnf module install python39 -y
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-echo "Install additional system packages"
+echo "${GREEN}Install additional system packages${NC}"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 sudo dnf install git tree lsof bash-completion -y &&\
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-echo "Show python details"
+echo "${GREEN}Show python details${NC}"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 sudo alternatives --list
 echo ""
 sudo python3 --version
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-echo "Install pip packages"
+echo "${GREEN}Install pip packages${NC}"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 python3 -m pip install --user --upgrade pip setuptools ansible
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-echo "Show ansible details"
+echo "${GREEN}Show ansible details${NC}"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 ansible --version
