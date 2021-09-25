@@ -1,0 +1,28 @@
+---
+- name: Install and Configure Apache
+  hosts: webserver
+  connection: local
+  become: true
+  vars:
+    documentroot: /var/www/vhosts/{{ ansible_hostname }}
+  tasks:
+  - name: Include role to install Apache
+    include_role:
+      name: geerlingguy.apache
+    vars:
+      apache_listen_port: 80
+      apache_vhosts:
+      - servername: "{{ ansible_hostname }}"
+        documentroot: "{{ documentroot }}"
+    tags:
+      - apache_role
+
+  - name: Create website folder
+    file:
+      state: directory
+      path: "{{ documentroot }}"
+
+  - name: Deploy static website demo 01
+    copy:
+      src: "{{ inventory_dir }}/static-website-demo-01/"
+      dest: "{{ documentroot }}/"
