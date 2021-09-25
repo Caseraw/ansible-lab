@@ -8,7 +8,7 @@ sudo dnf module install python39 -y
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 echo "Install additional system packages"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-sudo dnf install git -y &&\
+sudo dnf install git tree lsof bash-completion -y &&\
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 echo "Show python details"
