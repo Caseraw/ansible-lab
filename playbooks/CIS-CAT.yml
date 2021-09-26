@@ -1,0 +1,104 @@
+--- 
+### This playbook requires some additional attention.
+##
+## Required variable: remote_hosts
+## Description: A list containing inventory hostnames to use as remote hosts for Ansible.
+## - Provide an inventory group like: -e "remote_hosts={{ groups.some_inventory_group }}"
+## - Provide a single machine like: -e "remote_hosts=['zmode800','zmode801']"
+## - Provide a list ofmachines: -e "remote_hosts=['zmode800']"
+##
+## Default variables:
+## - ciscat_package         => Path to CIS-CAT archive
+## - ciscat_package_dir     => Path to house CIS-CAT archive extracts
+## - ciscat_package_path    => Path to the CIS-CAT extracted archive
+## - ciscat_benchmark       => Benchmark kind
+## - ciscat_profile         => Benchmark profile
+## - ciscat_report_dir      => Path to house reports
+## - ciscat_report_archive  => Path to report archive
+## - mail_to_address        => List of e-mail addresses to send the reports to
+##
+## Command example:
+## ansible-playbook playbooks/security_audit/ciscat_2020-06-30-v3.0.67_skeleton.yml \
+## -e "remote_hosts={{ groups.some_inventory_group }}"
+
+- name: Deploy and perform CIS-CAT audit
+  hosts: localhost
+  connection: local
+  gather_facts: True
+  become: True
+  vars:
+    ciscat_package: '{{ inventory_dir }}/files/ciscat-full-bundle-2021-07-27-v3.0.75.zip'
+    ciscat_package_dir: /root/ciscat
+    ciscat_package_path: /root/ciscat/cis-cat-full/
+    ciscat_benchmark: 'benchmarks/CIS_Red_Hat_Enterprise_Linux_8_Benchmark_v1.0.1-xccdf.xmll'
+    ciscat_profile: xccdf_org.cisecurity.benchmarks_profile_Level_2_-_Server
+    ciscat_report_dir: '{{ ciscat_package_path }}'
+    ciscat_report_archive: '{{ ciscat_report_dir }}/ciscat-{{ ansible_fqdn }}.zip'
+    mail_to_address: '{{ hostvars["multiplay_vars_stub"].mail_to_address | default([]) }}'
+  tasks:
+    - name: Install CIS-CAT dependencies
+      yum:
+        name:
+          - unzip
+          - java-1.8.0-openjdk-headless.x86_64
+        state: present
+
+    - name: Create ciscat directory
+      file:
+        path: '{{ ciscat_package_dir }}'
+        state: directory
+        owner: root
+        group: root
+
+    - name: Extract ciscat package on targets
+      unarchive:
+        src: '{{ ciscat_package }}'
+        dest: '{{ ciscat_package_dir }}'
+        owner: root
+        group: root
+
+    - name: Make CIS-CAT executable
+      file:
+        path: '{{ ciscat_package_path }}/CIS-CAT.sh'
+        mode: a+x
+
+    - name: Run CIS-CAT audit
+      shell: >
+          ./CIS-CAT.sh 
+          -b {{ ciscat_benchmark | replace(" ", "") }}
+          -p {{ ciscat_profile }}
+          -r {{ ciscat_report_dir }} -a -t -x
+      register: ciscat_output
+      args:
+        chdir: '{{ ciscat_package_path }}'
+
+    - name: Find report files
+      find:
+        paths: '{{ ciscat_report_dir }}'
+        patterns: '*.txt,*.xml,*.html'
+      register: find_ciscat_report_files
+    
+    - name: Create a list of report files
+      set_fact:
+        ciscat_report_files: '{{ ciscat_report_files | default([]) + [ item.path ] }}'
+      loop: '{{ find_ciscat_report_files.files }}'
+
+    - name: Archive files due to size
+      archive:
+        path: '{{ ciscat_report_files }}'
+        format: zip
+        dest: '{{ ciscat_report_archive }}'
+
+    # - name: Send mail report
+    #   mail:
+    #     to: '{{ mail_to_address }}'
+    #     subject: CIS-CAT audit | {{ ansible_fqdn }} | {{ ansible_date_time.date }} {{ ansible_date_time.time }}
+    #     body: '{{ ciscat_output.stdout }}'
+    #     attach: '{{ ciscat_report_archive }}'
+    #   when:
+    #     - mail_to_address | length > 0
+
+    # - name: Cleanup CIS-CAT files
+    #   file:
+    #     path: '{{ ciscat_package_dir }}'
+    #     state: absent
