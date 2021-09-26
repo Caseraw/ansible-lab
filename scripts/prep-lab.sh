@@ -11,7 +11,7 @@ sudo dnf module install python39 -y
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 printf "${GREEN}Install additional system packages${NC}\n"
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-sudo dnf install git tree lsof bash-completion -y &&\
+sudo dnf install git tree lsof bash-completion unzip -y &&\
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 printf "${GREEN}Show python details${NC}\n"
