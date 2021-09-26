@@ -32,6 +32,7 @@
       - /tmp/lynis_run_audit_system_clear.txt
       - /var/log/lynis.log
       - /var/log/lynis-report.dat
+    lynis_report_archive: '{{ lynis_package_dir }}/lynis-{{ ansible_fqdn }}.zip'
     mail_to_address: '{{ hostvars["multiplay_vars_stub"].mail_to_address | default([]) }}'
   tasks:
     - name: Create lynis directory
@@ -57,6 +58,12 @@
       register: audit_system_output
       args:
         chdir: '{{ lynis_package_path }}'
+
+    - name: Archive files due to size
+      archive:
+        path: '{{ lynis_file_list }}'
+        format: zip
+        dest: '{{ lynis_report_archive }}'
 
     # - name: Make mail body
     #   command: cat /tmp/lynis_run_audit_system_clear.txt
